@@ -1,0 +1,279 @@
+$dark-purple1: #1b2033;
+$dark-purple2: #2d3044;
+$dark-purple3: #3c4055;
+$off-white: #f9f9f9;
+$accent: #4378eb;
+
+$school: #f95a6c;
+$work: #f5a623;
+$project: #d71ff5;
+$personal: #43e7ab;
+
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400');
+
+html, body, .container {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body, .side-nav, .main-container {
+  display: flex;
+  font-family: 'Open Sans', sans-serif;
+  background-color: $dark-purple1;
+  color: $off-white;
+  font-size: 14px;
+}
+
+input, select, textarea, button {
+  padding: 10px;
+  width: 100%;
+  font-family: 'Open Sans', sans-serif;
+}
+
+button {
+  background: $accent;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  outline: none;
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: rgba(255,255,255,0.1);
+}
+
+.side-nav, .task-container, .task-list {
+  flex: 1;
+}
+
+.placeholder {
+  margin-bottom: 20px;
+  min-height: 80px;
+  border: 1px dashed rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+  padding: 10px;
+  display: flex;
+}
+
+.task-labels ul {
+  padding-left: 0;
+
+  li {
+    display:inline;
+    margin-left: 20px;
+
+    &::before {
+      content:'\25CF ';
+      font-size: 20px;
+      margin-right: 10px;
+    }
+
+    &#backlog {
+      &::before {
+        color: $school;
+      }
+    }
+
+    &#todo {
+      &::before {
+        color: $work;
+      }
+    }
+
+    &#progress {
+      &::before {
+        color: $project;
+      }
+    }
+
+    &#done {
+      &::before {
+        color: $personal;
+      }
+    }
+  }
+}
+
+.main-container {
+  flex: 7;
+  display: flex;
+  flex-direction: column;
+}
+
+.task-labels {
+  display: flex;
+  align-items: center;
+  height: 80px;
+  justify-content: space-between;
+  padding-right: 60px;
+
+  .new-task {
+    padding: 10px 30px;
+    background-color: $accent;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+}
+
+.content-container {
+  background: $dark-purple2;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+
+  table {
+    width: 100%;
+    padding: 30px 20px 30px 20px;
+    height: calc(100% - 80px);
+  }
+
+  th {
+    height: 50px;
+    padding: 0 20px 0 20px;
+    width: 25%;
+    line-height: 50px;
+    font-size: 14px;
+
+    div {
+      background-color: rgba(255, 255, 255, 0.1);
+      height: 100%;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  td {
+    vertical-align: top;
+    padding: 0;
+
+    .sortable {
+      height: 100%;
+      margin: 0px 20px 0 20px;
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      overflow: auto;
+
+      .task {
+        background: $off-white;
+        color: $dark-purple1;
+        margin-bottom: 20px;
+        min-height: 80px;
+        border-radius: 5px;
+        font-size: 12px;
+        padding: 10px;
+        display: flex;
+        cursor: pointer;
+
+        .indicator {
+          height: 60px;
+          width: 3px;
+        }
+
+        .content {
+          display: flex;
+          flex-direction: column;
+          padding-left: 10px;
+          color: #666;
+          font-size: 10px;
+          justify-content: center;
+
+          .title {
+            color: $dark-purple1;
+            line-height: 20px;
+            font-weight: 700;
+            font-size: 12px;
+          }
+        }
+
+        &.school {
+          .indicator {
+            background-color: $school;
+          }
+        }
+
+        &.work {
+          .indicator {
+            background-color: $work;
+          }
+        }
+
+        &.project {
+          .indicator {
+            background-color: $project;
+          }
+        }
+
+        &.personal {
+          .indicator {
+            background-color: $personal;
+          }
+        }
+      }
+    }
+  }
+}
+
+/*modal stuff*/
+
+.lightbox {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: none;
+
+  .new-task {
+    width: 300px;
+    background-color: #f9f9f9;
+    right: 60px;
+    top: 70px;
+    position: absolute;
+    border-radius: 5px;
+
+    &:after {
+      content: '';
+      vertical-align: middle;
+      margin: auto;
+      position: absolute;
+      left: 180px;
+      right: 0;
+      bottom: 98%;
+      width: 15px;
+      height: 15px;
+      background: $accent;
+      -moz-transform: rotate(-45deg);
+      -webkit-transform: rotate(-45deg);
+    }
+
+    .title {
+      border-radius: 5px 5px 0 0;
+      height: 50px;
+      background: $accent;
+      display: flex;
+      align-items: center;
+      padding-left: 20px;
+    }
+
+    .desc {
+      padding: 0px 20px 20px 20px;
+
+      input, select, textarea, button {
+        margin-top: 20px;
+      }
+    }
+  }
+}
