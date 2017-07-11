@@ -1,20 +1,20 @@
 var database = firebase.database();
+var originNode = "";
+var targetNode = "";
 
 //Call on document ready
-$(document)
-	.ready(function () {
+$(document).ready(function () {
+	//Make tasks sortable
+	$('table#tblAttachAttributes')
+		.find('div.sortable')
+		.sortable({
+			connectWith: 'div.sortable',
+			placeholder: "placeholder"
+		});
 
-		//Make tasks sortable
-		$('table#tblAttachAttributes')
-			.find('div.sortable')
-			.sortable({
-				connectWith: 'div.sortable',
-				placeholder: "placeholder"
-			});
-
-		//Populate divs with tasks
-		populateTasks();
-	});
+	//Populate divs with tasks
+	populateTasks();
+});
 
 //Populate tasks on DOM with data pulled from firebase
 function populateTasks() {
@@ -63,13 +63,21 @@ function createTaskTemplate(stage, key, taskType, taskTitle, taskDesc) {
 	$("#" + stage +"-wrapper").sortable({
 		connectWith: ".sortable",
 		//I'm sure there's a better way to do this . . .
+		
 		activate: function(e, ui) {
-			console.log(ui.item.context.parentElement.id.split("-")[0]);
+			originNode = ui.item.context.parentElement.id.split("-")[0];
 		},
 		deactivate: function(e, ui) {
-			console.log(ui.item.context.parentElement.id.split("-")[0]);
-		},
+			targetNode = ui.item.context.parentElement.id.split("-")[0];
+			if(originNode != targetNode) {
+				console.log('yep!')
+			}
+		}
 	})
+}
+
+function updateTask(key) {
+	
 }
 
 //Creates a task and adds to backlog

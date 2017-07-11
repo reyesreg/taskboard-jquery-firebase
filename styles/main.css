@@ -7,6 +7,9 @@ html, body, .container {
 * {
   box-sizing: border-box; }
 
+body {
+  padding: 20px 80px 0 80px !important; }
+
 body, .side-nav, .main-container {
   display: flex;
   font-family: 'Open Sans', sans-serif;
