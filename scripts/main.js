@@ -14,20 +14,27 @@ $(document).ready(function () {
 
 	//Populate divs with tasks
 	populateTasks();
+	setModalPosition();
 });
+
+//Finds new task button and places modal accordingly
+function setModalPosition() {
+	const btnPos = $('#btn-new-task').position();
+	$('#new-task-modal').css({"top": (btnPos.top + 60) + "px", "left": (btnPos.left - 160) + "px"})
+}
 
 //Populate tasks on DOM with data pulled from firebase
 function populateTasks() {
 	var backlog = firebase.database().ref('backlog/').orderByKey();
 	var todo = firebase.database().ref('todo/').orderByKey();
-	var inProgress = firebase.database().ref('inprogress/').orderByKey();
+	var inProgress = firebase.database().ref('inProgress/').orderByKey();
 	var done = firebase.database().ref('done/').orderByKey();
 
 	let allStages = [
 		{name: 'backlog', ref: backlog},
 		{name: 'todo', ref: todo},
 		{name: 'inProgress', ref: inProgress},
-		{name: 'backlog', ref: done},
+		{name: 'done', ref: done},
 	]
 
 	for(let i = 0; i < allStages.length; i++) {
@@ -36,9 +43,9 @@ function populateTasks() {
 					snapshot.forEach(function(childSnapshot) {
 						var key = 			childSnapshot.key;
 
-						var taskType = 	childSnapshot.val().taskType;
-						var taskTitle = childSnapshot.val().taskTitle;
-						var taskDesc = 	childSnapshot.val().taskDesc;
+						var taskType 	= childSnapshot.val().taskType;
+						var taskTitle	= childSnapshot.val().taskTitle;
+						var taskDesc 	= childSnapshot.val().taskDesc;
 
 						createTaskTemplate(allStages[i].name, key, taskType, taskTitle, taskDesc);
 				});
@@ -48,13 +55,16 @@ function populateTasks() {
 
 //Creates and appends task HTML elements
 function createTaskTemplate(stage, key, taskType, taskTitle, taskDesc) {
-	var wrapperDiv = 			$("<div></div>", {"class": "task " + taskType, "id": key});
-	var indicatorDiv = 		$("<div>", {"class": "indicator"});
-	var contentDiv =			$("<div>", {"class": "content"});
-	var spanTitle = 			$("<span>", {"class": "title"}).text(taskTitle);
-	var spanDesc = 				$("<span>").text(taskDesc);
+	var wrapperDiv 		= $("<div>", {"class": "task " + taskType, "id": key});
+	var optionDiv			= $("<div>", {"class": "options"});
+	var indicatorDiv 	= $("<div>", {"class": "indicator"});
+	var contentDiv 		= $("<div>", {"class": "content"});
+	var spanTitle 		=	$("<span>", {"class": "title"}).text(taskTitle);
+	var spanDesc 			= $("<span>").text(taskDesc);
 
 	$("#" + stage +"-wrapper").append(wrapperDiv);
+	wrapperDiv.append(optionDiv);
+	optionDiv.append('...');
 	wrapperDiv.append(indicatorDiv);
 	wrapperDiv.append(contentDiv);
 	contentDiv.append(spanTitle);
@@ -63,21 +73,32 @@ function createTaskTemplate(stage, key, taskType, taskTitle, taskDesc) {
 	$("#" + stage +"-wrapper").sortable({
 		connectWith: ".sortable",
 		//I'm sure there's a better way to do this . . .
+
 		
-		activate: function(e, ui) {
+		
+		start: function(e, ui) {
 			originNode = ui.item.context.parentElement.id.split("-")[0];
 		},
-		deactivate: function(e, ui) {
+		stop: function(e, ui) {
 			targetNode = ui.item.context.parentElement.id.split("-")[0];
-			if(originNode != targetNode) {
-				console.log('yep!')
-			}
-		}
+			updateTask(key, taskType, taskTitle, taskDesc);
+		},
 	})
 }
 
-function updateTask(key) {
-	
+//Copies data from previous stage
+//Creates task in new stage
+function updateTask(key, taskType, taskTitle, taskDesc) {
+	console.log(originNode, targetNode);
+	var updates = {};
+	updates[originNode + '/' + key + '/'] = null;
+	updates[targetNode + '/' + key + '/'] = {
+		taskType: taskType,
+		taskTitle: taskTitle,
+		taskDesc: taskDesc
+	}
+	console.log(firebase.database().ref().update(updates));
+	return firebase.database().ref().update(updates);
 }
 
 //Creates a task and adds to backlog
@@ -93,21 +114,21 @@ function createTask() {
 	var updates = {};
 	updates['/backlog/' + newPostKey] = postData;
 
-	$("#new-task-modal").hide();
+	$("#modal-bg").hide();
 	firebase.database().ref().update(updates);
 	populateTasks();
 }
 
 //Opens add task modal
 function openModal() {
-	$("#new-task-modal").show();
+	$("#modal-bg").show();
 }
 
 //Closes add task modal if clicked outside
 $(document).mouseup(function(e) 
 {
-	if (!$("#new-task-modal").is(e.target) && $("#new-task-modal").has(e.target).length === 0) 
+	if (!$("#modal-bg").is(e.target) && $("#modal-bg").has(e.target).length === 0) 
 	{
-			$("#new-task-modal").hide();
+			$("#modal-bg").hide();
 	}
 });

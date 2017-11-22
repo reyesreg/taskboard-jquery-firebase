@@ -31,6 +31,7 @@ body, .side-nav, .main-container {
   background-color: $dark-purple1;
   color: $off-white;
   font-size: 14px;
+  justify-content: center;
 }
 
 input, select, textarea, button {
@@ -68,7 +69,7 @@ button {
 .placeholder {
   margin-bottom: 20px;
   min-height: 80px;
-  border: 1px dashed rgba(255, 255, 255, 0.5);
+  border: 2 dashed rgba(255, 255, 255, 0.5);
   border-radius: 5px;
   padding: 10px;
   display: flex;
@@ -117,6 +118,7 @@ button {
   flex: 7;
   display: flex;
   flex-direction: column;
+  max-width: 1200px;
 }
 
 .task-labels {
@@ -124,7 +126,6 @@ button {
   align-items: center;
   height: 80px;
   justify-content: space-between;
-  padding-right: 60px;
 
   .new-task {
     padding: 10px 30px;
@@ -156,7 +157,7 @@ button {
     div {
       background-color: rgba(255, 255, 255, 0.1);
       height: 100%;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
     }
   }
 
@@ -181,6 +182,45 @@ button {
         padding: 10px;
         display: flex;
         cursor: pointer;
+        position: relative;
+
+        .options {
+          position: absolute;
+          top: 0;
+          right: 0;
+          height: 20px;
+          display: flex;
+          width: 30px;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .bubble-delete-container {
+          position: absolute;
+          right: 0;
+          top: 0;
+          z-index: 100;
+        }
+
+        .bubble-delete {
+          animation: xAxis 0.4s 1 ease-in normal;
+          animation-fill-mode: forwards;
+        }
+
+        .bubble-delete::after {
+          content: '';
+          display: block;
+          width: 20px;
+          height: 20px;
+          border-radius: 20px;
+          background-color: #f95a6c;
+          animation: yAxis 0.4s 1 ease-out normal;
+          animation-fill-mode: forwards;
+        }
+
+        .bubble-delete:hover::after {
+          background-color: black;
+        }
 
         .indicator {
           height: 60px;
@@ -239,12 +279,12 @@ button {
   height: 100%;
   background: rgba(0,0,0,0.5);
   display: none;
+  top: 0;
+  left: 0;
 
   .new-task {
     width: 300px;
     background-color: #f9f9f9;
-    right: 60px;
-    top: 70px;
     position: absolute;
     border-radius: 5px;
 
@@ -279,5 +319,28 @@ button {
         margin-top: 20px;
       }
     }
+  }
+}
+
+@keyframes xAxis {
+  0% {
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 0;
+  }
+
+  100% {
+    animation-timing-function: ease-in;
+    transform: translateX(-20px);
+    opacity: 1
+  }
+}
+
+@keyframes yAxis {
+  100% {
+    animation-timing-function: ease-out;
+    transform: translateY(-20px);
   }
 }
